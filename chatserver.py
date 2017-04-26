@@ -13,18 +13,16 @@ class MyChat(basic.LineReceiver):
     def connectionMade(self):
         print("Got new client!")
         self.factory.clients.append(self)
+	self.buffer = "";
 
     def connectionLost(self, reason):
         print("Lost a client!")
         self.factory.clients.remove(self)
+        print(reason);
+        print(self.buffer);
 
     def lineReceived(self, line):
         print("received", repr(line))
-        for c in self.factory.clients:
-            c.message(line)
-
-    def message(self, message):
-        self.transport.write(message + '\n')
 
 
 from twisted.internet import protocol
@@ -36,3 +34,5 @@ factory.clients = []
 
 application = service.Application("chatserver")
 internet.TCPServer(1025, factory).setServiceParent(application)
+
+
